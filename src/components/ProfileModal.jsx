@@ -67,11 +67,11 @@ const ProfileModal = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 sm:items-center p-0 sm:p-4 animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-md sm:rounded-3xl rounded-t-3xl shadow-2xl flex flex-col relative animate-in slide-in-from-bottom-full sm:slide-in-from-bottom-10 max-h-[90vh]">
+      <div className="bg-white dark:bg-gray-900 w-full max-w-md sm:rounded-3xl rounded-t-3xl shadow-2xl flex flex-col relative animate-in slide-in-from-bottom-full sm:slide-in-from-bottom-10 max-h-[90vh] transition-colors duration-200">
         
-        <header className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-white rounded-t-3xl sticky top-0 z-10">
-          <h2 className="text-xl font-bold text-gray-900">My Profile</h2>
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors">
+        <header className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 rounded-t-3xl sticky top-0 z-10 transition-colors duration-200">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">My Profile</h2>
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </header>
@@ -81,7 +81,7 @@ const ProfileModal = ({ onClose }) => {
           <div className="space-y-4">
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input 
@@ -89,13 +89,13 @@ const ProfileModal = ({ onClose }) => {
                   name="name" 
                   value={profile.name} 
                   onChange={handleChange}
-                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all" 
+                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all" 
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone Number</label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input 
@@ -103,13 +103,13 @@ const ProfileModal = ({ onClose }) => {
                   name="phone" 
                   value={profile.phone} 
                   onChange={handleChange}
-                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all" 
+                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all" 
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Address</label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input 
@@ -117,13 +117,13 @@ const ProfileModal = ({ onClose }) => {
                   name="address" 
                   value={profile.address} 
                   onChange={handleChange}
-                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all" 
+                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all" 
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Blood Group</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Blood Group</label>
               <div className="relative">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-[10px] font-bold">
                   {profile.group || '?'}
@@ -132,7 +132,7 @@ const ProfileModal = ({ onClose }) => {
                   name="group" 
                   value={profile.group} 
                   onChange={handleChange}
-                  className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all appearance-none text-gray-700" 
+                  className="w-full pl-10 pr-10 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all appearance-none" 
                 >
                   <option value="" disabled>Select Blood Group</option>
                   {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(bg => (
@@ -145,8 +145,8 @@ const ProfileModal = ({ onClose }) => {
               </div>
             </div>
 
-            <div className="border-t border-gray-100 pt-4 mt-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Last Blood Donation Date</label>
+            <div className="border-t border-gray-100 dark:border-gray-800 pt-4 mt-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Last Blood Donation Date</label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input 
@@ -155,7 +155,7 @@ const ProfileModal = ({ onClose }) => {
                   value={profile.lastDonation} 
                   onChange={handleChange}
                   max={new Date().toISOString().split('T')[0]} // Max date is today
-                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all" 
+                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all" 
                 />
               </div>
               {!isEligible && (
@@ -165,10 +165,10 @@ const ProfileModal = ({ onClose }) => {
               )}
             </div>
 
-            <div className={`flex items-center justify-between p-4 rounded-xl border mt-2 transition-colors ${!isEligible ? 'bg-gray-50 border-gray-200' : 'bg-red-50 border-red-100'}`}>
+            <div className={`flex items-center justify-between p-4 rounded-xl border mt-2 transition-colors ${!isEligible ? 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700' : 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-900/50'}`}>
               <div>
-                <p className={`font-semibold text-sm ${!isEligible ? 'text-gray-500' : 'text-gray-900'}`}>Available for Donation</p>
-                <p className="text-xs text-gray-500">Let others know if you can donate</p>
+                <p className={`font-semibold text-sm ${!isEligible ? 'text-gray-500' : 'text-gray-900 dark:text-gray-100'}`}>Available for Donation</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Let others know if you can donate</p>
               </div>
               <label className={`relative inline-flex items-center ${isEligible ? 'cursor-pointer' : 'cursor-not-allowed'}`}>
                 <input 
@@ -178,14 +178,14 @@ const ProfileModal = ({ onClose }) => {
                   disabled={!isEligible}
                   onChange={(e) => setProfile({...profile, isAvailable: e.target.checked})}
                 />
-                <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                <div className="w-11 h-6 bg-gray-300 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
               </label>
             </div>
 
           </div>
         </div>
         
-        <div className="p-6 border-t border-gray-100 bg-white sm:rounded-b-3xl">
+        <div className="p-6 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 sm:rounded-b-3xl">
           <button 
             onClick={handleSave}
             className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2"
