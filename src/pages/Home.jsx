@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LogOut, MapPin, Search, Phone, Home as HouseIcon, UserCircle, AlertTriangle, Clock, ChevronRight, Moon, Sun, Droplet } from 'lucide-react';
-import { collection, onSnapshot, doc, updateDoc, query, orderBy, limit } from 'firebase/firestore';
+import { collection, onSnapshot, doc, updateDoc, query, orderBy, limit, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import BloodGroupButton from '../components/BloodGroupButton';
@@ -298,8 +298,24 @@ const Home = () => {
                       </p>
                       {feed.note && <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 italic w-full truncate">"{feed.note}"</p>}
                       
-                      <div className="mt-2 pt-2 border-t border-gray-200 flex justify-end">
-                          <a href={`tel:${feed.phone}`} className="text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md transition-colors flex items-center gap-1">
+                      <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                          {currentUser?.uid === feed.postedBy ? (
+                             <button
+                                onClick={async () => {
+                                   if(window.confirm("Are you sure you want to delete this urgent request?")) {
+                                      try {
+                                         await deleteDoc(doc(db, 'urgent_requests', feed.id));
+                                      } catch(e) {
+                                         alert('Failed to delete post');
+                                      }
+                                   }
+                                }}
+                                className="text-xs font-bold text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                             >
+                                Delete
+                             </button>
+                          ) : (<span></span>)}
+                          <a href={`tel:${feed.phone}`} className="text-xs font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 px-3 py-1 rounded-md transition-colors flex items-center gap-1">
                              <Phone className="w-3 h-3"/> Contact
                           </a>
                       </div>
