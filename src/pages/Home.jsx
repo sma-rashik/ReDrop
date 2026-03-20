@@ -447,6 +447,11 @@ const Home = () => {
 
       </main>
 
+      {/* Footer */}
+      <footer className="max-w-md mx-auto px-4 py-6 mb-4 text-center text-sm text-gray-500 dark:text-gray-400">
+        Created By: <a href="https://www.linkedin.com/in/sma-rashik/" target="_blank" rel="noopener noreferrer" className="font-semibold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:underline transition-colors">S M Abdul Rashik</a>
+      </footer>
+
       {/* Map Modal */}
       {isMapOpen && (
         <MapModal 
