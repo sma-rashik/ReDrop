@@ -11,7 +11,7 @@ function App() {
       <Route path="/" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/home" element={<Home />} />
-      <Route path="/admin-secret-rashik" element={<AdminPanel />} />
+      <Route path="/admin-redrop" element={<AdminPanel />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
