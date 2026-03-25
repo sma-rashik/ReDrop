@@ -12,6 +12,12 @@ const Login = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (localStorage.getItem('userProfile')) {
+      navigate('/home');
+    }
+  }, [navigate]);
+
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const onLogin = async (e) => {

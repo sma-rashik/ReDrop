@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LogOut, MapPin, Search, Phone, Home as HouseIcon, UserCircle, AlertTriangle, Clock, ChevronRight, Droplet } from 'lucide-react';
 import { collection, onSnapshot, doc, updateDoc, query, orderBy, limit, deleteDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import BloodGroupButton from '../components/BloodGroupButton';
 import Button from '../components/Button';
@@ -135,7 +135,13 @@ const Home = () => {
     return matchGroup && matchDistance;
   });
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      if (auth) await auth.signOut();
+      localStorage.removeItem('userProfile');
+    } catch (e) {
+      console.error(e);
+    }
     navigate('/');
   };
 
