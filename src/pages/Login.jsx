@@ -1,51 +1,55 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Droplet } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Droplet, Phone, Lock } from 'lucide-react';
 import Button from '../components/Button';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
 const Login = () => {
+  const [formData, setFormData] = useState({ phone: '', password: '' });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const onGoogleSignIn = async () => {
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const onLogin = async (e) => {
+    e.preventDefault();
     setLoading(true);
+    setError(null);
+
+    if (!formData.phone || !formData.password) {
+      setError("Please enter both phone and password.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      
-      // Save or merge to Firestore Database
-      const userRef = doc(db, 'users', user.uid);
-      const docSnap = await getDoc(userRef);
-      
-      let profileData = {
-          uid: user.uid,
-          name: user.displayName || '',
-          email: user.email || '',
-          phone: '',
-          address: '',
-          lastDonation: '',
-          isAvailable: true,
-          group: 'A+' // default placeholder
-      };
+      // Use our dummy email strategy
+      const dummyEmail = `${formData.phone}@bloodlink.app`;
+      const userCredential = await signInWithEmailAndPassword(auth, dummyEmail, formData.password);
+      const user = userCredential.user;
+
+      // Fetch Profile Data
+      const docRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-         profileData = { ...profileData, ...docSnap.data() };
+        const profileData = { uid: user.uid, ...docSnap.data() };
+        localStorage.setItem('userProfile', JSON.stringify(profileData));
+        navigate('/home');
       } else {
-         // Create the user document on their first sign in
-         await setDoc(userRef, profileData);
+        setError("User profile data not found.");
       }
 
-      // Save to localStorage for immediate UI render speed
-      localStorage.setItem('userProfile', JSON.stringify(profileData));
-      navigate('/home');
-
-    } catch (error) {
-      console.error("Error signing in with Google:", error);
-      alert(`Google Sign-In failed: ${error.message}`);
+    } catch (err) {
+      console.error(err);
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+          setError("Invalid phone number or password.");
+      } else {
+          setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -64,26 +68,56 @@ const Login = () => {
           <p className="text-gray-500 text-sm">Every drop counts. Save a life today.</p>
         </div>
 
+        {error && (
+          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center border border-red-200">
+            {error}
+          </div>
+        )}
+
         {/* Action Section */}
-        <div className="pt-6">
-          <Button 
-            onClick={onGoogleSignIn}
-            fullWidth 
-            type="button" 
-            variant="primary" className="py-4 text-lg shadow-red-200 flex items-center justify-center gap-3 bg-white border-2 border-gray-200 !text-gray-700 hover:bg-gray-50 focus:ring-4 focus:ring-gray-100 transition-all font-semibold" 
-            disabled={loading}
-          >
-            <svg viewBox="0 0 24 24" className="w-6 h-6" xmlns="http://www.w3.org/2000/svg">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-            </svg>
-            {loading ? 'Signing in...' : 'Continue with Google'}
-          </Button>
-          <p className="text-xs text-center text-gray-400 mt-6 px-4 leading-relaxed">
-            By continuing, you agree to BloodLink's Terms of Service and Privacy Policy.
-          </p>
+        <form onSubmit={onLogin} className="pt-2 space-y-4">
+          <div>
+            <div className="relative">
+               <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+               <input 
+                  type="tel" 
+                  name="phone" 
+                  placeholder="Phone Number"
+                  value={formData.phone} 
+                  onChange={handleChange} className="w-full pl-9 pr-4 py-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all text-sm" 
+               />
+            </div>
+          </div>
+          <div>
+            <div className="relative">
+               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+               <input 
+                  type="password" 
+                  name="password" 
+                  placeholder="Password"
+                  value={formData.password} 
+                  onChange={handleChange} className="w-full pl-9 pr-4 py-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all text-sm" 
+               />
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <Button 
+              type="submit"
+              fullWidth 
+              variant="primary" className="py-4 text-lg shadow-red-200 bg-red-600 text-white hover:bg-red-700 transition-all font-semibold flex items-center justify-center gap-2" 
+              disabled={loading}
+            >
+              {loading ? 'Logging in...' : 'Sign In'}
+            </Button>
+          </div>
+        </form>
+
+        <div className="text-center text-sm text-gray-500 mt-6 leading-relaxed">
+          Don't have an account?{' '}
+          <Link to="/signup" className="text-red-600 font-semibold hover:underline">
+            Register here
+          </Link>
         </div>
 
       </div>

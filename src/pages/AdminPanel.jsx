@@ -14,7 +14,7 @@ const AdminPanel = () => {
    useEffect(() => {
       // Check Auth
       const unsubAuth = onAuthStateChanged(auth, (user) => {
-         if (user && user.email === 'smarashik00@gmail.com') {
+         if (user && user.email === '01994412000@bloodlink.app') {
             setIsAuthorized(true);
          } else {
             setIsAuthorized(false);
@@ -66,8 +66,8 @@ const AdminPanel = () => {
          <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4 text-center transition-colors">
             <ShieldAlert className="w-16 h-16 text-red-500 mb-4" />
             <h1 className="text-2xl font-bold text-gray-900">Access Denied!</h1>
-            <p className="text-gray-500 mt-2">Only the admin (smarashik00@gmail.com) can view this page.</p>
-            <p className="text-xs text-gray-400 mt-1">Make sure you are logged in with the correct Google account.</p>
+            <p className="text-gray-500 mt-2">Only the admin (01994412000) can view this page.</p>
+            <p className="text-xs text-gray-400 mt-1">Make sure you are logged in with the correct Phone Number.</p>
             <a href="/" className="mt-6 px-6 py-2 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 shadow-md transition-colors">Go back Home</a>
          </div>
       );
