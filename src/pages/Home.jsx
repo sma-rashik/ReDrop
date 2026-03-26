@@ -156,10 +156,9 @@ const Home = () => {
       {/* App Bar */}
       <header className="bg-white/80 backdrop-blur-xl shadow-sm shadow-red-100/50 border-b border-red-50 sticky top-0 z-20">
         <div className="max-w-md mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-red-600 to-rose-500 text-transparent bg-clip-text flex items-center gap-1.5">
-             <img src="/logo.png" className="w-6 h-6 object-contain drop-shadow" alt="ReDrop" />
-             ReDrop
-          </h1>
+          <div className="flex items-center">
+             <img src="/logo.png" className="h-10 w-auto object-contain drop-shadow-sm" alt="ReDrop Logo" />
+          </div>
           <div className="flex gap-1 items-center">
             <button 
               onClick={() => setIsProfileOpen(true)} className="relative p-2 text-gray-500 hover:text-red-500 transition-colors rounded-full hover:bg-gray-100"

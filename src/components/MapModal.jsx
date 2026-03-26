@@ -28,16 +28,16 @@ function MapUpdater({ center }) {
 }
 
 const MapModal = ({ onClose, currentUser, displayedDonors }) => {
-  if (!currentUser?.coordinates) return null;
-  const centerPosition = [currentUser.coordinates.lat, currentUser.coordinates.lng];
+  if (!currentUser?.coordinates || currentUser.coordinates.length !== 2) return null;
+  const centerPosition = currentUser.coordinates;
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-white animate-in zoom-in-95 duration-200">
       {/* Header */}
       <header className="px-5 py-4 flex items-center justify-between border-b border-gray-100 bg-white shadow-sm z-10 shrink-0">
-        <div className="flex items-center gap-2">
-           <img src="/logo.png" className="w-8 h-8 object-contain" alt="ReDrop" />
-           <h2 className="text-lg font-bold text-red-600 tracking-tight">Live Donor Map</h2>
+        <div className="flex items-center gap-3">
+           <img src="/logo.png" className="h-8 w-auto object-contain" alt="ReDrop Logo" />
+           <h2 className="text-lg font-bold text-gray-800 tracking-tight">Live Donor Map</h2>
         </div>
         <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors">
           <X className="w-6 h-6" />
@@ -66,10 +66,10 @@ const MapModal = ({ onClose, currentUser, displayedDonors }) => {
             </Marker>
 
             {/* Render Donors within radius */}
-            {displayedDonors.map((donor) => (
+            {displayedDonors.map((donor) => (donor.coordinates && donor.coordinates.length === 2) && (
                 <Marker 
                   key={donor.id} 
-                  position={[donor.coordinates.lat, donor.coordinates.lng]}
+                  position={donor.coordinates}
                 >
                   <Popup>
                     <div className="text-center w-40">
