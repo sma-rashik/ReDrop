@@ -105,6 +105,16 @@ const Login = () => {
                   onChange={handleChange} className="w-full pl-9 pr-4 py-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all text-sm" 
                />
             </div>
+            <div className="flex justify-end mt-2">
+               <a 
+                 href="https://wa.me/8801994412000?text=Hi%20Admin,%20I%20have%20forgotten%20my%20ReDrop%20password.%20My%20registered%20phone%20number%20is%20" 
+                 target="_blank" 
+                 rel="noopener noreferrer" 
+                 className="text-xs text-red-600 font-semibold hover:underline"
+               >
+                 Forgot Password?
+               </a>
+            </div>
           </div>
 
           <div className="pt-2">
