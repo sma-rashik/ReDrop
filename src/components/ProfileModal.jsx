@@ -20,10 +20,7 @@ const ProfileModal = ({ onClose }) => {
   }, []);
 
   const handleChange = (e) => {
-    // Only allow changing lastDonation
-    if (e.target.name === 'lastDonation') {
-      setProfile({ ...profile, [e.target.name]: e.target.value });
-    }
+    setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
   // Eligibility Check (3 months = ~90 days)
@@ -52,6 +49,10 @@ const ProfileModal = ({ onClose }) => {
       if (profile.uid) {
           const userRef = doc(db, 'users', profile.uid);
           await updateDoc(userRef, {
+              name: profile.name,
+              phone: profile.phone,
+              address: profile.address,
+              group: profile.group,
               isAvailable: profile.isAvailable,
               lastDonation: profile.lastDonation || ''
           });
@@ -78,60 +79,67 @@ const ProfileModal = ({ onClose }) => {
         </header>
 
         <div className="p-6 overflow-y-auto space-y-5">
-          {/* Read-only Form Fields */}
           <div className="space-y-4">
             
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">Full Name (Cannot be changed)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input 
                   type="text" 
+                  name="name"
                   value={profile.name} 
-                  disabled
-                  className="w-full pl-9 pr-4 py-2.5 bg-gray-100 border border-gray-200 text-gray-600 rounded-xl cursor-not-allowed" 
+                  onChange={handleChange}
+                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all" 
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">Phone Number (Cannot be changed)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input 
                   type="tel" 
+                  name="phone"
                   value={profile.phone} 
-                  disabled
-                  className="w-full pl-9 pr-4 py-2.5 bg-gray-100 border border-gray-200 text-gray-600 rounded-xl cursor-not-allowed" 
+                  onChange={handleChange}
+                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all" 
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">Address (Cannot be changed)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Home Location (Address)</label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input 
                   type="text" 
+                  name="address"
                   value={profile.address} 
-                  disabled
-                  className="w-full pl-9 pr-4 py-2.5 bg-gray-100 border border-gray-200 text-gray-600 rounded-xl cursor-not-allowed" 
+                  onChange={handleChange}
+                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all" 
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-500 mb-1">Blood Group (Cannot be changed)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Blood Group</label>
               <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-[10px] font-bold">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-[10px] font-bold z-10">
                   {profile.group || '?'}
                 </div>
-                <input 
-                  type="text" 
+                <select 
+                  name="group"
                   value={profile.group} 
-                  disabled
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-100 border border-gray-200 text-gray-600 rounded-xl cursor-not-allowed" 
-                />
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all appearance-none cursor-pointer" 
+                >
+                  <option value="" disabled>Select Blood Group</option>
+                  {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(g => (
+                    <option key={g} value={g}>{g}</option>
+                  ))}
+                </select>
               </div>
             </div>
 

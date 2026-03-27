@@ -26,9 +26,14 @@ const AdminPanel = () => {
       const unsubUsers = onSnapshot(collection(db, 'users'), sn => {
          setUsers(sn.docs.map(d => ({id: d.id, ...d.data()})));
       });
-      // Fetch Posts
+      // Fetch Posts History
       const unsubPosts = onSnapshot(collection(db, 'urgent_requests'), sn => {
-         setPosts(sn.docs.map(d => ({id: d.id, ...d.data()})));
+         const postList = sn.docs.map(d => ({id: d.id, ...d.data()}));
+         postList.sort((a, b) => {
+            if (!a.timestamp || !b.timestamp) return 0;
+            return b.timestamp.toDate() - a.timestamp.toDate();
+         });
+         setPosts(postList);
       });
       return () => {
          unsubAuth();
@@ -107,25 +112,37 @@ const AdminPanel = () => {
                </div>
              </div>
 
-             {/* Posts Table */}
+             {/* Posts History Table */}
              <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-bold">Live Urgent Posts</h2>
-                  <span className="bg-red-100 text-red-700 font-bold px-3 py-1 rounded-full text-xs">{posts.length} Active</span>
+                  <h2 className="text-lg font-bold">Urgent Posts History</h2>
+                  <span className="bg-red-100 text-red-700 font-bold px-3 py-1 rounded-full text-xs">{posts.length} Total</span>
                </div>
                <div className="space-y-3 max-h-[65vh] overflow-y-auto pr-2">
-                  {posts.map(p => (
-                     <div key={p.id} className="flex justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-100">
+                  {posts.map(p => {
+                     let isExpired = false;
+                     if (p.timestamp) {
+                        const diffHrs = (Date.now() - p.timestamp.toDate().getTime()) / (1000 * 60 * 60);
+                        isExpired = diffHrs >= 24;
+                     }
+                     return (
+                     <div key={p.id} className={`flex justify-between items-center p-4 rounded-xl border transition-colors ${isExpired ? 'bg-gray-50 border-gray-100 opacity-70' : 'bg-gray-50 border-red-100'}`}>
                         <div>
-                           <p className="font-semibold text-sm text-gray-900">{p.name}</p>
-                           <p className="text-xs font-bold text-red-600 mt-0.5">Needs {p.bloodGroup} at {p.location}</p>
+                           <div className="flex items-center gap-2 mb-1">
+                             <p className="font-semibold text-sm text-gray-900">{p.name || 'Anonymous'}</p>
+                             <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${isExpired ? 'bg-gray-200 text-gray-500' : 'bg-green-100 text-green-700'}`}>
+                               {isExpired ? 'Expired' : 'Active Live'}
+                             </span>
+                           </div>
+                           <p className="text-xs font-bold text-red-600">Needs {p.bloodGroup} at {p.location}</p>
+                           {p.timestamp && <p className="text-[10px] text-gray-400 mt-1">{p.timestamp.toDate().toLocaleString()}</p>}
                         </div>
-                        <button onClick={() => deletePost(p.id)} className="p-2 text-red-500 hover:bg-red-50 :bg-red-900/20 rounded-lg transition-colors" title="Delete Post">
+                        <button onClick={() => deletePost(p.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Delete Post">
                            <Trash2 className="w-5 h-5"/>
                         </button>
                      </div>
-                  ))}
-                  {posts.length === 0 && <p className="text-center text-gray-500 py-10">No active posts</p>}
+                  )})}
+                  {posts.length === 0 && <p className="text-center text-gray-500 py-10">No post history found</p>}
                </div>
              </div>
            </div>

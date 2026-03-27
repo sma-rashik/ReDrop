@@ -16,6 +16,26 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
+// Custom Donor Icon
+const createDonorIcon = (group) => L.divIcon({
+  className: 'bg-transparent border-0',
+  html: `<div style="background-color: #ef4444; width: 36px; height: 36px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 2.5px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+           <span style="transform: rotate(45deg); color: white; font-weight: 800; font-size: 13px;">${group}</span>
+         </div>`,
+  iconSize: [36, 36],
+  iconAnchor: [18, 36],
+  popupAnchor: [0, -36]
+});
+
+// Custom User Icon
+const userIcon = L.divIcon({
+  className: 'bg-transparent border-0',
+  html: `<div style="background-color: #3b82f6; width: 22px; height: 22px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.4);"></div>`,
+  iconSize: [22, 22],
+  iconAnchor: [11, 11],
+  popupAnchor: [0, -11]
+});
+
 // Auto-center map to user
 function MapUpdater({ center }) {
   const map = useMap();
@@ -27,9 +47,8 @@ function MapUpdater({ center }) {
   return null;
 }
 
-const MapModal = ({ onClose, currentUser, displayedDonors }) => {
-  if (!currentUser?.coordinates || currentUser.coordinates.length !== 2) return null;
-  const centerPosition = currentUser.coordinates;
+const MapModal = ({ onClose, centerPosition, displayedDonors }) => {
+  if (!centerPosition || centerPosition.length !== 2) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-white animate-in zoom-in-95 duration-200">
@@ -59,9 +78,9 @@ const MapModal = ({ onClose, currentUser, displayedDonors }) => {
             <MapUpdater center={centerPosition} />
 
             {/* Current User Marker */}
-            <Marker position={centerPosition}>
+            <Marker position={centerPosition} icon={userIcon}>
                <Popup>
-                 <div className="font-bold text-center text-red-600">You are here</div>
+                 <div className="font-bold text-center text-blue-600">You are here</div>
                </Popup>
             </Marker>
 
@@ -70,6 +89,7 @@ const MapModal = ({ onClose, currentUser, displayedDonors }) => {
                 <Marker 
                   key={donor.id} 
                   position={donor.coordinates}
+                  icon={createDonorIcon(donor.group)}
                 >
                   <Popup>
                     <div className="text-center w-40">
@@ -77,9 +97,11 @@ const MapModal = ({ onClose, currentUser, displayedDonors }) => {
                       <div className="text-xs font-bold text-red-600 bg-red-50 inline-block px-2 py-0.5 rounded-full mb-2">
                         {donor.group}
                       </div>
-                      <div className="text-xs text-gray-500 font-medium mb-3">
-                        {donor.distance} km away
-                      </div>
+                      {donor.distance !== '?' && (
+                        <div className="text-xs text-gray-500 font-medium mb-3">
+                          {donor.distance} km away
+                        </div>
+                      )}
                       <div className="flex gap-2">
                          <a href={`tel:+880${donor.phone.replace(/\D/g, '').replace(/^(?:88)?0?/, '')}`} className="flex-1 text-center bg-gray-100 text-gray-700 font-bold rounded-md py-1.5 px-2 text-[10px] hover:bg-gray-200 transition">Call</a>
                          <a 
