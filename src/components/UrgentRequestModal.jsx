@@ -20,7 +20,7 @@ const UrgentRequestModal = ({ onClose, currentUser }) => {
     
     setLoading(true);
     try {
-      await addDoc(collection(db, 'urgent_requests'), {
+      const requestData = {
         bloodGroup,
         location,
         phone,
@@ -29,7 +29,22 @@ const UrgentRequestModal = ({ onClose, currentUser }) => {
         name: currentUser.name,
         timestamp: serverTimestamp(),
         status: 'Active'
-      });
+      };
+      
+      await addDoc(collection(db, 'urgent_requests'), requestData);
+      
+      // Trigger Background Push Notifications asynchronously via free Vercel Edge Function
+      fetch('/api/notify', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({
+            bloodGroup,
+            requesterName: currentUser.name,
+            location,
+            note
+         })
+      }).catch(e => console.error("Notification API Dispatch Failed:", e));
+
       onClose();
     } catch (err) {
       console.error("Error posting urgent request:", err);

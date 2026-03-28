@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { LogOut, MapPin, Search, Phone, Home as HouseIcon, UserCircle, AlertTriangle, Clock, Droplet } from 'lucide-react';
 import { collection, onSnapshot, doc, updateDoc, query, orderBy, limit, deleteDoc } from 'firebase/firestore';
-import { db, auth } from '../firebase';
+import { db, auth, messaging } from '../firebase';
+import { getToken } from 'firebase/messaging';
 import { useNavigate } from 'react-router-dom';
 import BloodGroupButton from '../components/BloodGroupButton';
 import Button from '../components/Button';
@@ -64,6 +65,35 @@ const Home = () => {
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
       );
+    }
+  }, [currentUser?.uid]);
+
+  // Request & Store FCM Push Token for specific blood group alerting
+  useEffect(() => {
+    if (currentUser?.uid && messaging && typeof window !== "undefined") {
+      const requestFCMToken = async () => {
+        try {
+          // If env var is missing, skip to avoid UI crashes
+          if(!import.meta.env.VITE_FIREBASE_VAPID_KEY) return;
+          
+          const permission = await Notification.requestPermission();
+          if (permission === 'granted') {
+            const currentToken = await getToken(messaging, { 
+               vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY 
+            });
+            if (currentToken) {
+              const userRef = doc(db, 'users', currentUser.uid);
+              await updateDoc(userRef, { fcmToken: currentToken });
+            }
+          }
+        } catch (err) {
+          console.log("FCM Background permission error/denied:", err);
+        }
+      };
+
+      if (Notification.permission !== 'denied') {
+        requestFCMToken();
+      }
     }
   }, [currentUser?.uid]);
 
@@ -239,7 +269,7 @@ const Home = () => {
 
       <main className="max-w-md mx-auto px-4 py-6 space-y-8">
         
-        {/* Live Urgent Feed */}
+        {/* Live Urgent Feed - Moved ABOVE Request Section */}
         {isProfileComplete && (
           <section className="bg-white/90 backdrop-blur-xl rounded-3xl p-5 shadow-sm shadow-red-100/50 border border-red-100 relative overflow-hidden transition-colors">
             <div className="absolute top-0 right-0 w-24 h-24 bg-red-50 rounded-bl-full -z-0 opacity-50"></div>
@@ -252,12 +282,11 @@ const Home = () => {
                  </div>
                  <h3 className="text-base font-bold text-gray-900">Live feed</h3>
               </div>
-
-              {userHistory.length > 0 && (
-                 <button onClick={() => setIsHistoryOpen(true)} className="flex items-center gap-1.5 text-xs font-bold text-gray-500 bg-gray-50 hover:bg-gray-100 hover:text-gray-900 px-3 py-1.5 rounded-lg border border-gray-100 shadow-sm transition-all duration-200">
-                    <Clock className="w-3.5 h-3.5" /> My History
-                 </button>
-              )}
+              <button 
+                onClick={() => setIsUrgentModalOpen(true)} className="text-xs font-bold text-white bg-red-500 hover:bg-red-600 px-3 py-1.5 rounded-full shadow-sm transition-colors"
+              >
+                + Post Need
+              </button>
             </div>
 
             <div className="space-y-3 relative z-10 max-h-64 overflow-y-auto pr-1">
@@ -288,9 +317,17 @@ const Home = () => {
                       <div className="mt-2 pt-2 border-t border-gray-200 flex justify-between items-center">
                           {currentUser?.uid === feed.postedBy ? (
                              <button
-                                onClick={() => setIsHistoryOpen(true)} className="text-xs font-bold text-gray-400 hover:text-gray-700 transition-colors flex items-center gap-1"
+                                onClick={async () => {
+                                   if(window.confirm("Are you sure you want to delete this urgent request?")) {
+                                      try {
+                                         await deleteDoc(doc(db, 'urgent_requests', feed.id));
+                                      } catch(e) {
+                                         alert('Failed to delete post');
+                                      }
+                                   }
+                                }} className="text-xs font-bold text-gray-500 hover:text-red-600 transition-colors"
                              >
-                                <Clock className="w-3 h-3"/> View in History
+                                Delete
                              </button>
                           ) : (<span></span>)}
                           <a href={`tel:+880${feed.phone.replace(/\D/g, '').replace(/^(?:88)?0?/, '')}`} className="text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md transition-colors flex items-center gap-1">
@@ -309,7 +346,7 @@ const Home = () => {
           <div className="flex justify-between items-end">
             <div>
               <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Request Blood</h2>
-              <p className="text-gray-500 text-sm mt-1">Select the blood group you need</p>
+              <p className="text-gray-500 text-sm mt-1">Select the blood group you need to immediately find nearby donors</p>
             </div>
           </div>
           
@@ -318,12 +355,19 @@ const Home = () => {
               <BloodGroupButton
                 key={group}
                 group={group}
-                selected={selectedGroup === group}
+                selected={searchedGroup === group}
                 onClick={(group) => {
-                  const newGroup = selectedGroup === group ? null : group;
-                  setSelectedGroup(newGroup);
-                  setSearchedGroup(newGroup); 
+                  setSelectedGroup(group);
+                  setSearchedGroup(searchedGroup === group ? null : group); // Instantly search or toggle off
                   setActiveDonorId(null);
+                  
+                  // Smoothly scroll down to the map/list section
+                  setTimeout(() => {
+                    window.scrollTo({
+                      top: document.body.scrollHeight,
+                      behavior: 'smooth'
+                    });
+                  }, 100);
                 }}
               />
             ))}
