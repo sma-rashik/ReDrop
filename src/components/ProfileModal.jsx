@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Save, Calendar, User, MapPin, Phone } from 'lucide-react';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import LocationAutocomplete from './LocationAutocomplete';
 
 const ProfileModal = ({ onClose }) => {
   const [profile, setProfile] = useState({
@@ -10,7 +11,8 @@ const ProfileModal = ({ onClose }) => {
     address: '',
     lastDonation: '',
     isAvailable: true,
-    group: ''
+    group: '',
+    profileCoordinates: []
   });
   const [loading, setLoading] = useState(false);
 
@@ -54,7 +56,8 @@ const ProfileModal = ({ onClose }) => {
               address: profile.address,
               group: profile.group,
               isAvailable: profile.isAvailable,
-              lastDonation: profile.lastDonation || ''
+              lastDonation: profile.lastDonation || '',
+              profileCoordinates: profile.profileCoordinates || []
           });
       }
       localStorage.setItem('userProfile', JSON.stringify(profile));
@@ -111,16 +114,17 @@ const ProfileModal = ({ onClose }) => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Home Location (Address)</label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input 
-                  type="text" 
-                  name="address"
-                  value={profile.address} 
-                  onChange={handleChange}
-                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all" 
-                />
-              </div>
+              <LocationAutocomplete 
+                value={profile.address}
+                onLocationSelect={(addr, coords) => {
+                   setProfile(prev => ({ 
+                      ...prev, 
+                      address: addr, 
+                      profileCoordinates: coords || [] 
+                   }));
+                }}
+                placeholder="Search precise home location..."
+              />
             </div>
 
             <div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LogOut, MapPin, Search, Phone, Home as HouseIcon, UserCircle, AlertTriangle, Clock, Droplet } from 'lucide-react';
+import { LogOut, MapPin, Search, Phone, Home as HouseIcon, UserCircle, AlertTriangle, Clock, Droplet, HelpCircle } from 'lucide-react';
 import { collection, onSnapshot, doc, updateDoc, query, orderBy, limit, deleteDoc } from 'firebase/firestore';
 import { db, auth, messaging } from '../firebase';
 import { getToken } from 'firebase/messaging';
@@ -41,6 +41,11 @@ const Home = () => {
 
   // 1. Get User's Live Location and Update Firestore
   useEffect(() => {
+    // 0. Fallback: Set location instantly using saved Account Profile Coordinates
+    if (currentUser?.profileCoordinates?.length === 2) {
+       setUserLocation(currentUser.profileCoordinates);
+    }
+
     if (currentUser && currentUser.uid && "geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -114,11 +119,13 @@ const Home = () => {
       const donorsList = [];
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        if (data.coordinates && docSnap.id !== currentUser?.uid) {
+        const activeCoords = data.coordinates?.length === 2 ? data.coordinates : data.profileCoordinates;
+        
+        if (docSnap.id !== currentUser?.uid) {
           
           let dist = '?';
-          if (userLocation && userLocation.length === 2 && data.coordinates.length === 2) {
-             dist = calculateDistance(userLocation[0], userLocation[1], data.coordinates[0], data.coordinates[1]);
+          if (userLocation && userLocation.length === 2 && activeCoords?.length === 2) {
+             dist = calculateDistance(userLocation[0], userLocation[1], activeCoords[0], activeCoords[1]);
           }
 
           let isEligible = true;
@@ -135,7 +142,7 @@ const Home = () => {
             distance: dist, 
             phone: data.phone,
             address: data.address,
-            coordinates: data.coordinates,
+            coordinates: activeCoords || [],
             isAvailable: data.isAvailable !== false,
             isEligible: isEligible
           });
@@ -231,6 +238,12 @@ const Home = () => {
              <img src="/logo.png" className="absolute top-1/2 left-0 -translate-y-1/2 h-28 w-auto object-contain mix-blend-multiply" alt="ReDrop Logo" />
           </div>
           <div className="flex gap-1 items-center">
+            <button 
+              onClick={() => navigate('/guide')} className="p-2 text-gray-500 hover:text-blue-500 transition-colors rounded-full hover:bg-blue-50"
+              aria-label="User Guide"
+            >
+              <HelpCircle className="w-6 h-6" />
+            </button>
             <button 
               onClick={() => setIsProfileOpen(true)} className="relative p-2 text-gray-500 hover:text-red-500 transition-colors rounded-full hover:bg-gray-100"
               aria-label="Profile"

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Droplet, User, Phone, MapPin, Calendar, Lock } from 'lucide-react';
 import Button from '../components/Button';
+import LocationAutocomplete from '../components/LocationAutocomplete';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
@@ -13,7 +14,8 @@ const Signup = () => {
     address: '',
     bloodGroup: '',
     lastDonation: '',
-    password: ''
+    password: '',
+    profileCoordinates: []
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -70,7 +72,8 @@ const Signup = () => {
           group: formData.bloodGroup,
           lastDonation: formData.lastDonation || '',
           isAvailable: isAvailable,
-          coordinates: []
+          coordinates: [],
+          profileCoordinates: formData.profileCoordinates
       };
 
       // Save to Firestore
@@ -150,16 +153,17 @@ const Signup = () => {
           </div>
 
           <div>
-             <div className="relative">
-               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-               <input 
-                  type="text" 
-                  name="address" 
-                  placeholder="Full Address *"
-                  value={formData.address} 
-                  onChange={handleChange} className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all text-sm" 
-               />
-             </div>
+             <LocationAutocomplete 
+                value={formData.address}
+                onLocationSelect={(addr, coords) => {
+                   setFormData(prev => ({ 
+                      ...prev, 
+                      address: addr, 
+                      profileCoordinates: coords || [] 
+                   }));
+                }}
+                placeholder="Full Home Address (Search & Select) *"
+             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">

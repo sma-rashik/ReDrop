@@ -3,10 +3,12 @@ import { X, Send, AlertCircle } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import Button from './Button';
+import LocationAutocomplete from './LocationAutocomplete';
 
 const UrgentRequestModal = ({ onClose, currentUser }) => {
   const [bloodGroup, setBloodGroup] = useState(currentUser?.group || 'O+');
   const [location, setLocation] = useState(currentUser?.address || '');
+  const [locationCoordinates, setLocationCoordinates] = useState(currentUser?.profileCoordinates || []);
   const [phone, setPhone] = useState(currentUser?.phone || '');
   const [note, setNote] = useState('');
   const [loading, setLoading] = useState(false);
@@ -14,7 +16,7 @@ const UrgentRequestModal = ({ onClose, currentUser }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!bloodGroup || !location || !phone) {
-      alert("Please fill out the required fields!");
+      alert("Please fill out all required fields.");
       return;
     }
     
@@ -23,6 +25,7 @@ const UrgentRequestModal = ({ onClose, currentUser }) => {
       const requestData = {
         bloodGroup,
         location,
+        locationCoordinates,
         phone,
         note,
         postedBy: currentUser.uid,
@@ -85,12 +88,13 @@ const UrgentRequestModal = ({ onClose, currentUser }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Hospital / Location *</label>
-            <input 
-              type="text" 
-              value={location} 
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="e.g. Dhaka Medical College" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-gray-900 rounded-xl focus:ring-2 focus:ring-red-500 outline-none transition-all" 
-              required
+            <LocationAutocomplete 
+              value={location}
+              onLocationSelect={(addr, coords) => {
+                 setLocation(addr);
+                 setLocationCoordinates(coords || []);
+              }}
+              placeholder="Search specific Hospital or Location..."
             />
           </div>
 

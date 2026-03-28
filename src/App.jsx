@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Home from './pages/Home';
 import AdminPanel from './pages/AdminPanel';
+import UserGuide from './pages/UserGuide';
 
 const PrivateRoute = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -32,6 +33,11 @@ function App() {
       <Route path="/home" element={
         <PrivateRoute>
           <Home />
+        </PrivateRoute>
+      } />
+      <Route path="/guide" element={
+        <PrivateRoute>
+          <UserGuide />
         </PrivateRoute>
       } />
       <Route path="/admin-redrop" element={<AdminPanel />} />
