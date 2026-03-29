@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Droplet, Phone, Lock } from 'lucide-react';
 import Button from '../components/Button';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
@@ -13,9 +13,14 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (localStorage.getItem('userProfile')) {
-      navigate('/home');
-    }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && localStorage.getItem('userProfile')) {
+        navigate('/home');
+      } else if (!user) {
+        localStorage.removeItem('userProfile');
+      }
+    });
+    return () => unsubscribe();
   }, [navigate]);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });

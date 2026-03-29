@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Droplet, User, Phone, MapPin, Calendar, Lock } from 'lucide-react';
 import Button from '../components/Button';
 import LocationAutocomplete from '../components/LocationAutocomplete';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 
@@ -22,9 +22,14 @@ const Signup = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (localStorage.getItem('userProfile')) {
-      navigate('/home');
-    }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && localStorage.getItem('userProfile')) {
+        navigate('/home');
+      } else if (!user) {
+        localStorage.removeItem('userProfile');
+      }
+    });
+    return () => unsubscribe();
   }, [navigate]);
 
   const handleChange = (e) => {
