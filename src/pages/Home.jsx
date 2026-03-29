@@ -27,6 +27,7 @@ const Home = () => {
   const [userHistory, setUserHistory] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(15);
   
   const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
   
@@ -64,9 +65,6 @@ const Home = () => {
         },
         (error) => {
           console.warn("Geolocation error:", error.message);
-          if (error.code === 1 || error.code === error.PERMISSION_DENIED) {
-             alert("আপনি Location (GPS) পারমিশন বন্ধ রেখেছেন। ম্যাপ এবং দূরত্বের ফিচার ব্যবহার করতে আপনার ব্রাউজার বা ডিভাইসের সেটিংস থেকে ReDrop অ্যাপের জন্য লোকেশন অন করুন!");
-          }
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
       );
@@ -121,8 +119,6 @@ const Home = () => {
         const data = docSnap.data();
         const activeCoords = data.coordinates?.length === 2 ? data.coordinates : data.profileCoordinates;
         
-        if (docSnap.id !== currentUser?.uid) {
-          
           let dist = '?';
           if (userLocation && userLocation.length === 2 && activeCoords?.length === 2) {
              dist = calculateDistance(userLocation[0], userLocation[1], activeCoords[0], activeCoords[1]);
@@ -137,7 +133,7 @@ const Home = () => {
 
           donorsList.push({
             id: docSnap.id,
-            name: data.name,
+            name: docSnap.id === currentUser?.uid ? `${data.name} (You)` : data.name,
             group: data.group || 'A+',
             distance: dist, 
             phone: data.phone,
@@ -146,11 +142,16 @@ const Home = () => {
             isAvailable: data.isAvailable !== false,
             isEligible: isEligible
           });
-        }
       });
-      if (userLocation) {
-         donorsList.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
-      }
+      donorsList.sort((a, b) => {
+        const aAvail = a.isAvailable && a.isEligible ? 1 : 0;
+        const bAvail = b.isAvailable && b.isEligible ? 1 : 0;
+        if (aAvail !== bAvail) return bAvail - aAvail;
+        if (userLocation && a.distance !== '?' && b.distance !== '?') {
+          return parseFloat(a.distance) - parseFloat(b.distance);
+        }
+        return 0;
+      });
       setDonors(donorsList);
     }, (error) => {
       console.error("Real-time map listen error:", error);
@@ -343,7 +344,7 @@ const Home = () => {
                                 Delete
                              </button>
                           ) : (<span></span>)}
-                          <a href={`tel:+880${feed.phone.replace(/\D/g, '').replace(/^(?:88)?0?/, '')}`} className="text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md transition-colors flex items-center gap-1">
+                          <a href={`tel:+880${String(feed.phone || '').replace(/\D/g, '').replace(/^(?:88)?0?/, '')}`} className="text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md transition-colors flex items-center gap-1">
                              <Phone className="w-3 h-3"/> Contact
                           </a>
                       </div>
@@ -373,6 +374,7 @@ const Home = () => {
                   setSelectedGroup(group);
                   setSearchedGroup(searchedGroup === group ? null : group); // Instantly search or toggle off
                   setActiveDonorId(null);
+                  setVisibleCount(15);
                   
                   // Smoothly scroll down to the map/list section
                   setTimeout(() => {
@@ -467,7 +469,8 @@ const Home = () => {
                 </button>
               </div>
             ) : (
-              displayedDonors.map((donor) => (
+              <>
+              {displayedDonors.slice(0, visibleCount).map((donor) => (
                 <div key={donor.id} className="flex flex-col p-4 rounded-2xl bg-white hover:bg-gray-50 transition-all border border-gray-100 shadow-sm group">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3">
@@ -502,11 +505,11 @@ const Home = () => {
 
                     {/* Action Buttons */}
                     <div className="flex flex-col gap-2 shrink-0">
-                       <a href={`tel:+880${donor.phone.replace(/\D/g, '').replace(/^(?:88)?0?/, '')}`} className="flex items-center justify-center gap-1.5 bg-white hover:bg-gray-50 py-1.5 px-3 rounded-lg border border-gray-200 transition-colors font-bold text-gray-700 shadow-sm text-[11px]">
+                       <a href={`tel:+880${String(donor.phone || '').replace(/\D/g, '').replace(/^(?:88)?0?/, '')}`} className="flex items-center justify-center gap-1.5 bg-white hover:bg-gray-50 py-1.5 px-3 rounded-lg border border-gray-200 transition-colors font-bold text-gray-700 shadow-sm text-[11px]">
                          <Phone className="w-3 h-3 text-gray-600" /> Call
                        </a>
                        <a 
-                         href={`https://wa.me/880${donor.phone.replace(/\D/g, '').replace(/^(?:88)?0?/, '')}?text=Hi%20${encodeURIComponent(donor.name)},%20I%20found%20you%20on%20ReDrop.%20I%20have%20an%20urgent%20need%20for%20${encodeURIComponent(donor.group)}%20blood.`} 
+                         href={`https://wa.me/880${String(donor.phone || '').replace(/\D/g, '').replace(/^(?:88)?0?/, '')}?text=Hi%20${encodeURIComponent(donor.name)},%20I%20found%20you%20on%20ReDrop.%20I%20have%20an%20urgent%20need%20for%20${encodeURIComponent(donor.group)}%20blood.`} 
                          target="_blank" 
                          rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 bg-[#25D366]/10 hover:bg-[#25D366]/20 py-1.5 px-3 rounded-lg border border-[#25D366]/30 transition-colors font-bold text-[#128C7E] shadow-sm text-[11px]"
                         >
@@ -516,7 +519,18 @@ const Home = () => {
                     </div>
                   </div>
                 </div>
-              ))
+              ))}
+              {visibleCount < displayedDonors.length && (
+                <div className="flex justify-center pt-2 pb-4">
+                  <button 
+                    onClick={() => setVisibleCount(prev => prev + 15)} 
+                    className="bg-white hover:bg-red-50 text-red-600 border border-red-200 text-sm font-bold py-2.5 px-6 rounded-full shadow-sm transition-colors focus:ring-2 focus:ring-red-500 focus:outline-none"
+                  >
+                    See More ({displayedDonors.length - visibleCount} hidden)
+                  </button>
+                </div>
+              )}
+              </>
             )}
           </div>
 

@@ -103,9 +103,9 @@ const MapModal = ({ onClose, centerPosition, displayedDonors }) => {
                         </div>
                       )}
                       <div className="flex gap-2">
-                         <a href={`tel:+880${donor.phone.replace(/\D/g, '').replace(/^(?:88)?0?/, '')}`} className="flex-1 text-center bg-gray-100 text-gray-700 font-bold rounded-md py-1.5 px-2 text-[10px] hover:bg-gray-200 transition">Call</a>
+                         <a href={`tel:+880${String(donor.phone || '').replace(/\D/g, '').replace(/^(?:88)?0?/, '')}`} className="flex-1 text-center bg-gray-100 text-gray-700 font-bold rounded-md py-1.5 px-2 text-[10px] hover:bg-gray-200 transition">Call</a>
                          <a 
-                           href={`https://wa.me/880${donor.phone.replace(/\D/g, '').replace(/^(?:88)?0?/, '')}?text=Hi%20${encodeURIComponent(donor.name)},%20I%20found%20you%20on%20ReDrop.%20I%20have%20an%20urgent%20need%20for%20${encodeURIComponent(donor.group)}%20blood.`}
+                           href={`https://wa.me/880${String(donor.phone || '').replace(/\D/g, '').replace(/^(?:88)?0?/, '')}?text=Hi%20${encodeURIComponent(donor.name)},%20I%20found%20you%20on%20ReDrop.%20I%20have%20an%20urgent%20need%20for%20${encodeURIComponent(donor.group)}%20blood.`}
                            target="_blank" rel="noopener noreferrer" 
                            className="flex-1 text-center bg-[#25D366]/10 text-[#128C7E] font-bold border border-[#25D366]/30 rounded-md py-1.5 px-2 text-[10px] hover:bg-[#25D366]/20 transition"
                          >
