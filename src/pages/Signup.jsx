@@ -49,7 +49,7 @@ const Signup = () => {
 
     try {
       // Formats exactly 10 digits
-      const cleanPhone = formData.phone.replace(/^(?:\+?88)?0?/, '');
+      const cleanPhone = String(formData.phone || '').replace(/\D/g, '').replace(/^(?:88)?0?/, '');
       if (cleanPhone.length !== 10) {
         setError("Phone number must be exactly 10 digits (e.g. 1712345678)");
         setLoading(false);

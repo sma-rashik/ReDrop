@@ -344,7 +344,7 @@ const Home = () => {
                                     Delete
                                  </button>
                               ) : (<span></span>)}
-                              <a href={`tel:+880${String(feed.phone || '').replace(/\D/g, '')}`} className="text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md transition-colors flex items-center gap-1">
+                              <a href={`tel:+880${String(feed.phone || '').replace(/\D/g, '').replace(/^(?:88)?0?/, '')}`} className="text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-md transition-colors flex items-center gap-1">
                                  <Phone className="w-3 h-3"/> Contact
                               </a>
                           </div>
@@ -501,10 +501,10 @@ const Home = () => {
                             </div>
                           </div>
                           <div className="grid grid-cols-2 sm:flex sm:flex-col gap-2 shrink-0 w-full sm:w-32 mt-2 sm:mt-0">
-                             <a href={`tel:+880${String(donor.phone || '').replace(/\D/g, '')}`} className="flex items-center justify-center gap-1.5 bg-white hover:bg-gray-50 py-3 rounded-xl border border-gray-100 transition-all font-bold text-gray-800 shadow-sm text-xs active:scale-95">
+                             <a href={`tel:+880${String(donor.phone || '').replace(/\D/g, '').replace(/^(?:88)?0?/, '')}`} className="flex items-center justify-center gap-1.5 bg-white hover:bg-gray-50 py-3 rounded-xl border border-gray-100 transition-all font-bold text-gray-800 shadow-sm text-xs active:scale-95">
                                <Phone className="w-3.5 h-3.5 text-red-500" /> Call
                              </a>
-                             <a href={`https://wa.me/880${String(donor.phone || '').replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 bg-[#25D366]/10 hover:bg-[#25D366]/20 py-3 rounded-xl border border-[#25D366]/20 transition-all font-bold text-[#128C7E] shadow-sm text-xs active:scale-95">
+                             <a href={`https://wa.me/880${String(donor.phone || '').replace(/\D/g, '').replace(/^(?:88)?0?/, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 bg-[#25D366]/10 hover:bg-[#25D366]/20 py-3 rounded-xl border border-[#25D366]/20 transition-all font-bold text-[#128C7E] shadow-sm text-xs active:scale-95">
                                WhatsApp
                              </a>
                           </div>
@@ -555,7 +555,7 @@ const Home = () => {
                       <p className="text-[11px] font-semibold text-gray-500 flex items-start gap-1 pb-3">
                         <MapPin className="w-3 h-3 mt-0.5 shrink-0 text-red-500"/> {feed.location}
                       </p>
-                      <a href={`tel:+880${String(feed.phone || '').replace(/\D/g, '')}`} className="w-full text-center text-[11px] font-black text-white bg-red-500 hover:bg-red-600 py-3 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-2">
+                      <a href={`tel:+880${String(feed.phone || '').replace(/\D/g, '').replace(/^(?:88)?0?/, '')}`} className="w-full text-center text-[11px] font-black text-white bg-red-500 hover:bg-red-600 py-3 rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-2">
                         <Phone className="w-3.5 h-3.5"/> Call Now
                       </a>
                     </motion.div>

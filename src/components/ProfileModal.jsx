@@ -49,18 +49,25 @@ const ProfileModal = ({ onClose }) => {
     
     try {
       if (profile.uid) {
-          const userRef = doc(db, 'users', profile.uid);
+          const cleanPhone = String(profile.phone || '').replace(/\D/g, '').replace(/^(?:88)?0?/, '');
+          const normalizedPhone = `+880${cleanPhone}`;
+          
           await updateDoc(userRef, {
               name: profile.name,
-              phone: profile.phone,
+              phone: normalizedPhone,
               address: profile.address,
               group: profile.group,
               isAvailable: profile.isAvailable,
               lastDonation: profile.lastDonation || '',
               profileCoordinates: profile.profileCoordinates || []
           });
+          
+          // Update local state with normalized phone
+          setProfile(prev => ({ ...prev, phone: normalizedPhone }));
+          localStorage.setItem('userProfile', JSON.stringify({ ...profile, phone: normalizedPhone }));
+      } else {
+        localStorage.setItem('userProfile', JSON.stringify(profile));
       }
-      localStorage.setItem('userProfile', JSON.stringify(profile));
     } catch (e) {
       console.error("Error updating profile in DB:", e);
       alert("Failed to update profile. Please check your connection.");

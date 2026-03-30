@@ -108,7 +108,7 @@ const UrgentRequestModal = ({ onClose, currentUser }) => {
                   type="tel" 
                   value={phone.replace(/\D/g, '').replace(/^(?:88)?0?/, '')} 
                   onChange={(e) => {
-                     const val = e.target.value.replace(/\D/g, '');
+                     const val = e.target.value.replace(/\D/g, '').replace(/^(?:88)?0?/, '');
                      setPhone(`+880${val.slice(0, 10)}`);
                   }} 
                   className="w-full pl-3 pr-4 py-3 bg-transparent text-gray-900 outline-none font-semibold tracking-wide" 
