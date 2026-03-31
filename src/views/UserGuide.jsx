@@ -1,9 +1,9 @@
 import React from 'react';
 import { ArrowLeft, MapPin, Search, Phone, Droplet, UserCircle, Bell, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 const UserGuide = () => {
-   const navigate = useNavigate();
+   const router = useRouter();
 
    return (
     <div className="min-h-screen bg-[#fffafa] text-gray-900 pb-20 font-sans selection:bg-red-200 selection:text-red-900 flex flex-col items-center">
@@ -12,7 +12,7 @@ const UserGuide = () => {
       <header className="w-full bg-white/80 backdrop-blur-xl shadow-sm shadow-red-100/50 border-b border-red-50 sticky top-0 z-20">
             <div className="max-w-md mx-auto px-4 py-4 flex items-center gap-3 w-full">
                <button
-                  onClick={() => navigate(-1)}
+                  onClick={() => router.back()}
                   className="p-2 -ml-2 text-gray-500 hover:text-red-600 transition-colors rounded-full hover:bg-gray-100"
                >
                   <ArrowLeft className="w-6 h-6" />

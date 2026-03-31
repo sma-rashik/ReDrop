@@ -4,7 +4,7 @@ import { LogOut, MapPin, Search, Phone, Home as HouseIcon, UserCircle, AlertTria
 import { collection, onSnapshot, doc, updateDoc, query, orderBy, limit, deleteDoc } from 'firebase/firestore';
 import { db, auth, messaging } from '../firebase';
 import { getToken } from 'firebase/messaging';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import BloodGroupButton from '../components/BloodGroupButton';
 import Button from '../components/Button';
 import ProfileModal from '../components/ProfileModal';
@@ -13,7 +13,7 @@ import MapModal from '../components/MapModal';
 import MyRequestHistoryModal from '../components/MyRequestHistoryModal';
 
 const Home = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [activeDonorId, setActiveDonorId] = useState(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -221,7 +221,7 @@ const Home = () => {
     } catch (e) {
       console.error(e);
     }
-    navigate('/');
+    router.push('/');
   };
 
   const isProfileComplete =
@@ -242,7 +242,7 @@ const Home = () => {
           </div>
           <div className="flex gap-4 items-center">
             <button 
-              onClick={() => navigate('/guide')} 
+              onClick={() => router.push('/guide')}
               className="p-1 text-gray-500 hover:text-red-500 transition-colors"
               aria-label="User Guide"
             >

@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import Home from './pages/Home';
-import AdminPanel from './pages/AdminPanel';
-import UserGuide from './pages/UserGuide';
+import Login from './views/Login';
+import Signup from './views/Signup';
+import Home from './views/Home';
+import AdminPanel from './views/AdminPanel';
+import UserGuide from './views/UserGuide';
 
 const PrivateRoute = ({ children }) => {
   const [user, setUser] = useState(null);

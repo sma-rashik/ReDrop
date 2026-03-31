@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Droplet, User, Phone, MapPin, Calendar, Lock } from 'lucide-react';
 import Button from '../components/Button';
 import LocationAutocomplete from '../components/LocationAutocomplete';
@@ -19,18 +20,18 @@ const Signup = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user && localStorage.getItem('userProfile')) {
-        navigate('/home');
+        router.push('/home');
       } else if (!user) {
         localStorage.removeItem('userProfile');
       }
     });
     return () => unsubscribe();
-  }, [navigate]);
+  }, [router]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -87,7 +88,7 @@ const Signup = () => {
 
       // Save to localStorage
       localStorage.setItem('userProfile', JSON.stringify(profileData));
-      navigate('/home');
+      router.push('/home');
 
     } catch (err) {
       console.error(err);
@@ -230,7 +231,7 @@ const Signup = () => {
 
         <p className="text-sm text-center text-gray-500 mt-4 leading-relaxed">
           Already have an account?{' '}
-          <Link to="/" className="text-red-600 font-semibold hover:underline">
+          <Link href="/" className="text-red-600 font-semibold hover:underline">
             Log in here
           </Link>
         </p>

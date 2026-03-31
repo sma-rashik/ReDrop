@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Droplet, Phone, Lock } from 'lucide-react';
 import Button from '../components/Button';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
@@ -10,18 +11,18 @@ const Login = () => {
   const [formData, setFormData] = useState({ phone: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user && localStorage.getItem('userProfile')) {
-        navigate('/home');
+        router.push('/home');
       } else if (!user) {
         localStorage.removeItem('userProfile');
       }
     });
     return () => unsubscribe();
-  }, [navigate]);
+  }, [router]);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -55,7 +56,7 @@ const Login = () => {
       if (docSnap.exists()) {
         const profileData = { uid: user.uid, ...docSnap.data() };
         localStorage.setItem('userProfile', JSON.stringify(profileData));
-        navigate('/home');
+        router.push('/home');
       } else {
         setError("User profile data not found.");
       }
@@ -147,7 +148,7 @@ const Login = () => {
 
         <div className="text-center text-sm text-gray-500 mt-6 leading-relaxed">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-red-600 font-semibold hover:underline">
+          <Link href="/signup" className="text-red-600 font-semibold hover:underline">
             Register here
           </Link>
         </div>

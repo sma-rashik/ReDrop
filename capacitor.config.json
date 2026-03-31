@@ -1,5 +1,5 @@
 {
   "appId": "com.bloodlink.app",
   "appName": "Bloodlink",
-  "webDir": "dist"
+  "webDir": "out"
 }
