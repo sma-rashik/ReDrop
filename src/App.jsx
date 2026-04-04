@@ -6,7 +6,6 @@ import Login from './views/Login';
 import Signup from './views/Signup';
 import Home from './views/Home';
 import AdminPanel from './views/AdminPanel';
-import UserGuide from './views/UserGuide';
 
 const PrivateRoute = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -33,11 +32,6 @@ function App() {
       <Route path="/home" element={
         <PrivateRoute>
           <Home />
-        </PrivateRoute>
-      } />
-      <Route path="/guide" element={
-        <PrivateRoute>
-          <UserGuide />
         </PrivateRoute>
       } />
       <Route path="/admin-redrop" element={<AdminPanel />} />

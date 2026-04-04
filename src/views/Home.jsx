@@ -11,6 +11,7 @@ import ProfileModal from '../components/ProfileModal';
 import UrgentRequestModal from '../components/UrgentRequestModal';
 import MapModal from '../components/MapModal';
 import MyRequestHistoryModal from '../components/MyRequestHistoryModal';
+import GuideModal from '../components/GuideModal';
 
 const Home = () => {
   const router = useRouter();
@@ -19,6 +20,7 @@ const Home = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isUrgentModalOpen, setIsUrgentModalOpen] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [searchedGroup, setSearchedGroup] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [maxDistance, setMaxDistance] = useState(50);
@@ -242,7 +244,7 @@ const Home = () => {
           </div>
           <div className="flex gap-4 items-center">
             <button 
-              onClick={() => router.push('/guide')}
+              onClick={() => setIsGuideOpen(true)}
               className="p-1 text-gray-500 hover:text-red-500 transition-colors"
               aria-label="User Guide"
             >
@@ -550,6 +552,9 @@ const Home = () => {
       )}
       {isMapOpen && userLocation && (
         <MapModal onClose={() => setIsMapOpen(false)} centerPosition={userLocation} displayedDonors={displayedDonors} />
+      )}
+      {isGuideOpen && (
+        <GuideModal onClose={() => setIsGuideOpen(false)} />
       )}
     </div>
   );
