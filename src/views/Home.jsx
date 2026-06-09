@@ -211,12 +211,11 @@ const Home = () => {
 
   const displayedDonors = donors.filter(donor => {
     const matchGroup = searchedGroup ? donor.group === searchedGroup : true;
-    const matchDistance = donor.distance !== '?' ? parseFloat(donor.distance) <= parseFloat(maxDistance) : true;
+    const matchDistance = donor.distance !== '?' ? parseFloat(donor.distance) <= parseFloat(maxDistance) : false;
     return matchGroup && matchDistance;
   });
 
   const handleLogout = async () => {
-    if (!window.confirm("Are you sure you want to log out?")) return;
     try {
       if (auth) await auth.signOut();
       localStorage.removeItem('userProfile');
@@ -335,9 +334,7 @@ const Home = () => {
                        {currentUser?.uid === feed.postedBy && (
                           <button
                             onClick={async () => {
-                              if (window.confirm("Are you sure?")) {
-                                try { await deleteDoc(doc(db, 'urgent_requests', feed.id)); } catch (e) { alert('Error'); }
-                              }
+                              try { await deleteDoc(doc(db, 'urgent_requests', feed.id)); } catch (e) { alert('Error'); }
                             }} className="text-[10px] font-bold text-gray-400 hover:text-red-600 transition-colors mb-1"
                           >
                             Delete My Request
@@ -518,22 +515,6 @@ const Home = () => {
           </div>
         </div>
       </main>
-
-      {/* FAB */}
-      {isProfileComplete && (
-        <div className="fixed bottom-6 w-full max-w-md px-6 pointer-events-none z-40 flex justify-end">
-          <motion.button
-            onClick={() => setIsUrgentModalOpen(true)}
-            animate={{ y: [0, -15, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="pointer-events-auto bg-red-600 text-white p-5 rounded-full shadow-2xl shadow-red-500/50 hover:bg-red-700 transition-all group"
-          >
-            <Droplet className="w-7 h-7" />
-          </motion.button>
-        </div>
-      )}
 
       {/* Footer */}
       <footer className="max-w-md mx-auto px-4 py-12 mb-4 text-center text-sm text-gray-500">

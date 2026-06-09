@@ -52,6 +52,7 @@ const ProfileModal = ({ onClose }) => {
           const cleanPhone = String(profile.phone || '').replace(/\D/g, '').replace(/^(?:88)?0?/, '');
           const normalizedPhone = `+880${cleanPhone}`;
           
+          const userRef = doc(db, 'users', profile.uid);
           await updateDoc(userRef, {
               name: profile.name,
               phone: normalizedPhone,

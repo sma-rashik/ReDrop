@@ -36,8 +36,8 @@ const UrgentRequestModal = ({ onClose, currentUser }) => {
       
       await addDoc(collection(db, 'urgent_requests'), requestData);
       
-      // Trigger Background Push Notifications asynchronously via free Vercel Edge Function
-      fetch('/api/notify', {
+      // Trigger Background Push Notifications asynchronously via express backend
+      fetch('http://localhost:5000/api/notify', {
          method: 'POST',
          headers: { 'Content-Type': 'application/json' },
          body: JSON.stringify({
