@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogOut, MapPin, Search, Phone, Home as HouseIcon, UserCircle, AlertTriangle, Clock, Droplet, HelpCircle } from 'lucide-react';
+import { LogOut, MapPin, Search, Phone, Home as HouseIcon, UserCircle, AlertTriangle, Clock, Droplet, HelpCircle, Download } from 'lucide-react';
 import { collection, onSnapshot, doc, updateDoc, query, orderBy, limit, deleteDoc } from 'firebase/firestore';
 import { db, auth, messaging } from '../firebase';
 import { getToken } from 'firebase/messaging';
@@ -31,6 +31,8 @@ const Home = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(8);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isInstallable, setIsInstallable] = useState(false);
 
   const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
@@ -42,6 +44,30 @@ const Home = () => {
   useEffect(() => {
     loadProfile();
   }, []);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+      setIsInstallable(false);
+    }
+  };
 
   // 1. Get User's Live Location and Update Firestore
   useEffect(() => {
@@ -242,6 +268,16 @@ const Home = () => {
              <img className="absolute top-1/2 left-0 -translate-y-1/2 h-28 w-auto object-contain mix-blend-multiply" alt="ReDrop Logo" src="/logo.png" />
           </div>
           <div className="flex gap-4 items-center">
+            {isInstallable && (
+              <button 
+                onClick={handleInstallClick}
+                className="p-1 text-red-600 hover:text-red-700 transition-colors animate-bounce"
+                aria-label="Install App"
+                title="Install App"
+              >
+                <Download className="w-6 h-6" />
+              </button>
+            )}
             <button 
               onClick={() => setIsGuideOpen(true)}
               className="p-1 text-gray-500 hover:text-red-500 transition-colors"
