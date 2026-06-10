@@ -6,6 +6,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata = {
   title: 'ReDrop - Bloodlink',
   description: 'A platform for blood donation and urgent requests.',
+  manifest: '/manifest.json',
 };
 
 export const viewport = {

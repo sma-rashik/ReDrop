@@ -30,7 +30,7 @@ const Home = () => {
   const [userHistory, setUserHistory] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(15);
+  const [visibleCount, setVisibleCount] = useState(8);
 
   const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
@@ -211,7 +211,7 @@ const Home = () => {
 
   const displayedDonors = donors.filter(donor => {
     const matchGroup = searchedGroup ? donor.group === searchedGroup : true;
-    const matchDistance = donor.distance !== '?' ? parseFloat(donor.distance) <= parseFloat(maxDistance) : false;
+    const matchDistance = donor.distance !== '?' ? parseFloat(donor.distance) <= parseFloat(maxDistance) : true;
     return matchGroup && matchDistance;
   });
 
@@ -373,7 +373,7 @@ const Home = () => {
                   setSelectedGroup(group);
                   setSearchedGroup(searchedGroup === group ? null : group);
                   setActiveDonorId(null);
-                  setVisibleCount(15);
+                  setVisibleCount(8);
                   setTimeout(() => {
                     window.scrollTo({
                       top: 400,
@@ -459,58 +459,70 @@ const Home = () => {
                 <button onClick={() => setIsUrgentModalOpen(true)} className="bg-red-600 text-white text-xs font-bold py-3 px-8 rounded-xl hover:bg-red-700 active:scale-95 transition-all">Post an Urgent Request</button>
               </motion.div>
             ) : (
-              <AnimatePresence mode="popLayout">
-                {displayedDonors.slice(0, visibleCount).map((donor, index) => (
-                  <motion.div
-                    layout
-                    key={donor.id}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.2, delay: index * 0.05 }}
-                    className="flex flex-col p-4 rounded-2xl bg-white hover:bg-gray-50 transition-all border border-gray-100 shadow-sm group"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center font-bold text-red-600 shrink-0 border border-red-100">
-                          {donor.group}
-                        </div>
-                        <div className="flex flex-col">
-                          <h4 className="font-bold text-gray-900 text-sm leading-tight">{donor.name}</h4>
-                          <div className="flex items-center text-[10px] mt-1 font-bold">
-                            {donor.isAvailable && donor.isEligible ? (
-                              <span className="text-green-600 flex items-center gap-1.5 bg-green-50 px-2.5 py-1 rounded-full border border-green-100/50">
-                                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div> Available
-                              </span>
-                            ) : (
-                              <span className="text-orange-600 flex items-center gap-1.5 bg-orange-50 px-2.5 py-1 rounded-full border border-orange-100/50">
-                                <div className="w-1.5 h-1.5 rounded-full bg-orange-500"></div> Recovery
-                                {!donor.isEligible && donor.lastDonation && (
-                                  <span className="text-orange-400 font-normal ml-0.5 text-[10px] tracking-tight whitespace-nowrap">
-                                    {"(< 90d)"}
-                                  </span>
-                                )}
-                              </span>
-                            )}
+              <>
+                <AnimatePresence mode="popLayout">
+                  {displayedDonors.slice(0, visibleCount).map((donor, index) => (
+                    <motion.div
+                      layout
+                      key={donor.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.2, delay: index * 0.05 }}
+                      className="flex flex-col p-4 rounded-2xl bg-white hover:bg-gray-50 transition-all border border-gray-100 shadow-sm group"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center font-bold text-red-600 shrink-0 border border-red-100">
+                            {donor.group}
                           </div>
-                          <p className="flex items-start gap-1 text-[11px] text-gray-500 font-medium mt-1.5">
-                            <HouseIcon className="w-3 h-3 mt-0.5 shrink-0 text-gray-400" />
-                            <span>{donor.address} {donor.distance !== '?' && <span className="text-gray-400 ml-0.5">({donor.distance} km)</span>}</span>
-                          </p>
+                          <div className="flex flex-col">
+                            <h4 className="font-bold text-gray-900 text-sm leading-tight">{donor.name}</h4>
+                            <div className="flex items-center text-[10px] mt-1 font-bold">
+                              {donor.isAvailable && donor.isEligible ? (
+                                <span className="text-green-600 flex items-center gap-1.5 bg-green-50 px-2.5 py-1 rounded-full border border-green-100/50">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div> Available
+                                </span>
+                              ) : (
+                                <span className="text-orange-600 flex items-center gap-1.5 bg-orange-50 px-2.5 py-1 rounded-full border border-orange-100/50">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-orange-500"></div> Recovery
+                                  {!donor.isEligible && donor.lastDonation && (
+                                    <span className="text-orange-400 font-normal ml-0.5 text-[10px] tracking-tight whitespace-nowrap">
+                                      {"(< 90d)"}
+                                    </span>
+                                  )}
+                                </span>
+                              )}
+                            </div>
+                            <p className="flex items-start gap-1 text-[11px] text-gray-500 font-medium mt-1.5">
+                              <HouseIcon className="w-3 h-3 mt-0.5 shrink-0 text-gray-400" />
+                              <span>{donor.address} {donor.distance !== '?' && <span className="text-gray-400 ml-0.5">({donor.distance} km)</span>}</span>
+                            </p>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 sm:flex sm:flex-col gap-2 shrink-0 w-full sm:w-32 mt-2 sm:mt-0">
+                          <a href={`tel:+${String(donor.phone || '').replace(/\D/g, '').startsWith('880') ? String(donor.phone || '').replace(/\D/g, '') : `880${String(donor.phone || '').replace(/\D/g, '').replace(/^0+/, '')}`}`} className="flex items-center justify-center gap-1.5 bg-white hover:bg-gray-50 py-3 rounded-xl border border-gray-100 transition-all font-bold text-gray-800 shadow-sm text-xs active:scale-95">
+                            <Phone className="w-3.5 h-3.5 text-red-500" /> Call
+                          </a>
+                          <a href={`https://wa.me/${String(donor.phone || '').replace(/\D/g, '').startsWith('880') ? String(donor.phone || '').replace(/\D/g, '') : `880${String(donor.phone || '').replace(/\D/g, '').replace(/^0+/, '')}`}?text=Hi%20${encodeURIComponent(donor.name)},%20I%20found%20you%20on%20ReDrop.%20I%20have%20an%20urgent%20need%20for%20${encodeURIComponent(donor.group)}%20blood.`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 bg-[#25D366]/10 hover:bg-[#25D366]/20 py-3 rounded-xl border border-[#25D366]/20 transition-all font-bold text-[#128C7E] shadow-sm text-xs active:scale-95">
+                            WhatsApp
+                          </a>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 sm:flex sm:flex-col gap-2 shrink-0 w-full sm:w-32 mt-2 sm:mt-0">
-                        <a href={`tel:+${String(donor.phone || '').replace(/\D/g, '').startsWith('880') ? String(donor.phone || '').replace(/\D/g, '') : `880${String(donor.phone || '').replace(/\D/g, '').replace(/^0+/, '')}`}`} className="flex items-center justify-center gap-1.5 bg-white hover:bg-gray-50 py-3 rounded-xl border border-gray-100 transition-all font-bold text-gray-800 shadow-sm text-xs active:scale-95">
-                          <Phone className="w-3.5 h-3.5 text-red-500" /> Call
-                        </a>
-                        <a href={`https://wa.me/${String(donor.phone || '').replace(/\D/g, '').startsWith('880') ? String(donor.phone || '').replace(/\D/g, '') : `880${String(donor.phone || '').replace(/\D/g, '').replace(/^0+/, '')}`}?text=Hi%20${encodeURIComponent(donor.name)},%20I%20found%20you%20on%20ReDrop.%20I%20have%20an%20urgent%20need%20for%20${encodeURIComponent(donor.group)}%20blood.`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 bg-[#25D366]/10 hover:bg-[#25D366]/20 py-3 rounded-xl border border-[#25D366]/20 transition-all font-bold text-[#128C7E] shadow-sm text-xs active:scale-95">
-                          WhatsApp
-                        </a>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+                {displayedDonors.length > visibleCount && (
+                  <div className="flex justify-center mt-4 pb-2">
+                    <button
+                      onClick={() => setVisibleCount(displayedDonors.length)}
+                      className="bg-red-50 hover:bg-red-100 text-red-700 font-bold py-2.5 px-6 rounded-xl border border-red-100 shadow-sm transition-all active:scale-95 text-sm"
+                    >
+                      View All Donors
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

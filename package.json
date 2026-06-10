@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "generate-sw": "node scripts/generate-sw.js",
-    "dev": "npm run generate-sw && next dev",
-    "build": "npm run generate-sw && next build",
+    "dev": "npm run generate-sw && next dev --webpack",
+    "build": "npm run generate-sw && next build --webpack",
     "start": "next start",
     "lint": "next lint"
   },
@@ -14,6 +14,7 @@
     "@capacitor/android": "^8.3.0",
     "@capacitor/cli": "^8.3.0",
     "@capacitor/core": "^8.3.0",
+    "@ducanh2912/next-pwa": "^10.2.9",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
