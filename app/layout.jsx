@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'ReDrop - Bloodlink',
+  title: 'Redrop',
   description: 'A platform for blood donation and urgent requests.',
   manifest: '/manifest.json',
 };

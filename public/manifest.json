@@ -1,6 +1,6 @@
 {
-  "name": "Bloodlink",
-  "short_name": "Bloodlink",
+  "name": "Redrop",
+  "short_name": "Redrop",
   "description": "A platform for blood donation and urgent requests.",
   "start_url": "/",
   "display": "standalone",

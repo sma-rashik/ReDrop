@@ -40,7 +40,7 @@ const LocationAutocomplete = ({ value = '', onLocationSelect, placeholder = 'Sea
            headers: {
               'Accept': 'application/json',
               // Nominatim requires a user-agent to avoid blocking
-              'User-Agent': 'BloodlinkApp/1.0 (bd.redrop)'
+              'User-Agent': 'RedropApp/1.0 (bd.redrop)'
            }
         });
         const data = await response.json();

@@ -265,11 +265,11 @@ const Home = () => {
       <header className="w-full bg-white border-b border-gray-50 sticky top-0 z-20">
         <div className="max-w-md mx-auto px-5 py-3 flex justify-between items-center">
           <div className="relative h-12 w-24">
-             <img className="absolute top-1/2 left-0 -translate-y-1/2 h-28 w-auto object-contain mix-blend-multiply" alt="ReDrop Logo" src="/logo.png" />
+            <img className="absolute top-1/2 left-0 -translate-y-1/2 h-28 w-auto object-contain mix-blend-multiply" alt="ReDrop Logo" src="/logo.png" />
           </div>
           <div className="flex gap-4 items-center">
             {isInstallable && (
-              <button 
+              <button
                 onClick={handleInstallClick}
                 className="p-1 text-red-600 hover:text-red-700 transition-colors animate-bounce"
                 aria-label="Install App"
@@ -278,15 +278,15 @@ const Home = () => {
                 <Download className="w-6 h-6" />
               </button>
             )}
-            <button 
+            <button
               onClick={() => setIsGuideOpen(true)}
               className="p-1 text-gray-500 hover:text-red-500 transition-colors"
               aria-label="User Guide"
             >
               <HelpCircle className="w-6 h-6" />
             </button>
-            <button 
-              onClick={() => setIsProfileOpen(true)} 
+            <button
+              onClick={() => setIsProfileOpen(true)}
               className="relative p-1 text-gray-500 hover:text-red-500 transition-colors"
               aria-label="Profile"
             >
@@ -295,8 +295,8 @@ const Home = () => {
                 <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
               )}
             </button>
-            <button 
-              onClick={handleLogout} 
+            <button
+              onClick={handleLogout}
               className="p-1 text-gray-500 hover:text-red-500 transition-colors"
               aria-label="Logout"
             >
@@ -304,7 +304,7 @@ const Home = () => {
             </button>
           </div>
         </div>
-        
+
         {/* Profile Completion Alert */}
         {!isProfileComplete && (
           <div className="bg-orange-50 border-b border-orange-100 p-2.5">
@@ -313,7 +313,7 @@ const Home = () => {
                 <AlertTriangle className="w-4 h-4 text-orange-600 shrink-0" />
                 <p className="text-orange-800 text-[10px] font-semibold leading-tight">Setup profile to use map.</p>
               </div>
-              <button 
+              <button
                 onClick={() => setIsProfileOpen(true)} className="shrink-0 bg-orange-600 hover:bg-orange-700 text-white text-[10px] font-bold py-1.5 px-3 rounded shadow-sm transition-colors"
               >
                 Setup
@@ -367,21 +367,21 @@ const Home = () => {
                       <MapPin className="w-3 h-3 mt-0.5 text-gray-400 shrink-0" /> {feed.location}
                     </p>
                     <div className="mt-3 pt-3 border-t border-gray-100 flex flex-col items-center gap-2">
-                       {currentUser?.uid === feed.postedBy && (
-                          <button
-                            onClick={async () => {
-                              try { await deleteDoc(doc(db, 'urgent_requests', feed.id)); } catch (e) { alert('Error'); }
-                            }} className="text-[10px] font-bold text-gray-400 hover:text-red-600 transition-colors mb-1"
-                          >
-                            Delete My Request
-                          </button>
-                       )}
-                       <a 
-                         href={`tel:+${String(feed.phone || '').replace(/\D/g, '').startsWith('880') ? String(feed.phone || '').replace(/\D/g, '') : `880${String(feed.phone || '').replace(/\D/g, '').replace(/^0+/, '')}`}`} 
-                         className="w-full py-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 border border-red-100 shadow-sm shadow-red-100/50 active:scale-95"
-                       >
-                         <Phone className="w-4 h-4" /> Call Now
-                       </a>
+                      {currentUser?.uid === feed.postedBy && (
+                        <button
+                          onClick={async () => {
+                            try { await deleteDoc(doc(db, 'urgent_requests', feed.id)); } catch (e) { alert('Error'); }
+                          }} className="text-[10px] font-bold text-gray-400 hover:text-red-600 transition-colors mb-1"
+                        >
+                          Delete My Request
+                        </button>
+                      )}
+                      <a
+                        href={`tel:+${String(feed.phone || '').replace(/\D/g, '').startsWith('880') ? String(feed.phone || '').replace(/\D/g, '') : `880${String(feed.phone || '').replace(/\D/g, '').replace(/^0+/, '')}`}`}
+                        className="w-full py-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 border border-red-100 shadow-sm shadow-red-100/50 active:scale-95"
+                      >
+                        <Phone className="w-4 h-4" /> Call Now
+                      </a>
                     </div>
                   </div>
                 ))
@@ -565,9 +565,9 @@ const Home = () => {
       </main>
 
       {/* Footer */}
-      <footer className="max-w-md mx-auto px-4 py-12 mb-4 text-center text-sm text-gray-500">
+      {/* <footer className="max-w-md mx-auto px-4 py-12 mb-4 text-center text-sm text-gray-500">
         Created By <a href="https://www.linkedin.com/in/sma-rashik/" target="_blank" rel="noopener noreferrer" className="font-semibold text-red-600 hover:underline transition-colors">S M Abdul Rashik</a>
-      </footer>
+      </footer> */}
 
       {/* Modals */}
       {isUrgentModalOpen && currentUser && (
